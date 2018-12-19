@@ -10,16 +10,35 @@ export default class SearchScreen extends React.Component {
     this.handleSearch = this.handleSearch.bind(this);
 
     this.state = {
-      searchTerm: 'tabasco',
+      searchTerm: '',
       searchResults: undefined,
       searching: false,
       error: undefined,
     }
   }
+  componentDidMount() {
+    this._onFocus = this.props.navigation.addListener(
+      'didFocus',
+      payload => {
+        // Search = desde scan
+        // SearchTab = cambiando tabs
+        const routeName = payload.action.routeName;
+        const searchTerm = this.props.navigation.getParam('bc', '');
+        if (routeName === 'Search') {
+          this.setState({
+            searchTerm,
+          });
+          // Invoke the search if we get something from the
+          // barcode scan screen.
+          this.performSearchAsync(searchTerm);
+        }
+      }
+    );
+  }
+  componentWillUnmount() {
+    this._onFocus.remove();
+  }
   render() {
-    const searchParam = this.props.navigation.getParam('bc', '');
-    console.log('searchParam');
-    console.log(searchParam);
     const estilos = StyleSheet.create({
       searchView: {
         zIndex: 1,
@@ -206,7 +225,6 @@ export default class SearchScreen extends React.Component {
 
     try {
       let resultados = await busqueda(term);
-      console.log(resultados);
 
       // Check items already added to our list.
       // const bcs = (await localForage.getItem('barcodes')) || [];

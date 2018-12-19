@@ -47,12 +47,12 @@ const ListStack = createStackNavigator(
 
 const matNavigator = createMaterialBottomTabNavigator(
   {
-    Scan: ScanStack,
-    Search: SearchStack,
-    List: ListStack,
+    ScanTab: ScanStack,
+    SearchTab: SearchStack,
+    ListTab: ListStack,
   },
   {
-    initialRouteName: 'Search',
+    initialRouteName: 'ScanTab',
     shifting: true,
     activeColor: '#fff',
     inactiveColor: '#ccc',
@@ -61,13 +61,13 @@ const matNavigator = createMaterialBottomTabNavigator(
         const { routeName } = navigation.state;
         let iconName;
         switch (routeName) {
-          case 'Scan':
+          case 'ScanTab':
             iconName = 'barcode-scan';
             break;
-          case 'Search':
+          case 'SearchTab':
             iconName = 'feature-search-outline';
             break;
-          case 'List':
+          case 'ListTab':
             iconName = 'view-dashboard'
             break;
         }
