@@ -8,8 +8,7 @@ export default class ListScreen extends React.Component {
   async componentDidMount() {
     const { barcodeStore, navigation } = this.props;
 
-    await barcodeStore.loadBarcodes();
-    if (!barcodeStore.hasBarcodes) {
+    if (!barcodeStore.hasBarcodes()) {
       barcodeStore.addBarcode('123');
     }
   }

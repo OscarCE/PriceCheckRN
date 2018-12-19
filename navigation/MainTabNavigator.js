@@ -52,7 +52,7 @@ const matNavigator = createMaterialBottomTabNavigator(
     ListTab: ListStack,
   },
   {
-    initialRouteName: 'ScanTab',
+    initialRouteName: 'ListTab',
     shifting: true,
     activeColor: '#fff',
     inactiveColor: '#ccc',

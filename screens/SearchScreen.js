@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { View, ScrollView, StyleSheet, Image } from 'react-native';
-import { Card, Searchbar, Title, Text } from 'react-native-paper';
+import { Card, Searchbar, Text, Button } from 'react-native-paper';
 import { busqueda } from './../api/Search';
+import Colors from './../constants/Colors';
+import { inject, observer } from 'mobx-react';
 
+@inject('barcodeStore')
+@observer
 export default class SearchScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -15,6 +19,8 @@ export default class SearchScreen extends React.Component {
       searching: false,
       error: undefined,
     }
+    this._barcodeStore = this.props.barcodeStore;
+    this._barcodeStore.loadBarcodes();
   }
   componentDidMount() {
     this._onFocus = this.props.navigation.addListener(
@@ -119,6 +125,20 @@ export default class SearchScreen extends React.Component {
         alignItems: 'baseline',
         justifyContent: 'flex-end',
       },
+      button: {
+        marginRight: -17,
+        marginLeft: -17,
+        marginBottom: -16,
+        marginTop: 18,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+      },
+      addButton: {
+        backgroundColor: Colors.primary,
+      },
+      removeButton: {
+        backgroundColor: Colors.errorBackground,
+      },
       t: {},
     });
     const searchTerm = this.state.searchTerm;
@@ -143,7 +163,7 @@ export default class SearchScreen extends React.Component {
                     key={index}
                     style={estilos.cardContainer}
                   >
-                    <Card elevation={1}
+                    <Card
                       key={index}
                       style={estilos.card}
                     >
@@ -199,6 +219,31 @@ export default class SearchScreen extends React.Component {
                             })
                           }
                         </View>
+                        <Button
+                          icon={
+                            item.added
+                              ? 'delete'
+                              : 'add-box'
+                          }
+                          mode="contained"
+                          onPress={
+                            item.added
+                              ? this.deleteBarcode.bind(this, item.barcode)
+                              : this.addBarcode.bind(this, item.barcode)
+                          }
+                          style={[
+                            estilos.button,
+                            item.added
+                              ? estilos.removeButton
+                              : estilos.addButton
+                          ]}
+                        >
+                          {
+                            item.added
+                              ? 'Remove'
+                              : 'Add'
+                          }
+                        </Button>
                       </Card.Content>
                     </Card>
                   </View>
@@ -209,6 +254,36 @@ export default class SearchScreen extends React.Component {
         </ScrollView>
       </View>
     );
+  }
+
+  async addBarcode(bc) {
+    this._barcodeStore.addBarcode(bc);
+
+    const newResults = this.state.searchResults.map((item) => {
+      if (item.barcode === bc) {
+        item.added = true;
+      }
+      return item;
+    });
+
+    this.setState({
+      searchResults: newResults,
+    })
+  }
+
+  async deleteBarcode(bc) {
+    this._barcodeStore.deleteBarcode(bc);
+
+    const newResults = this.state.searchResults.map((item) => {
+      if (item.barcode === bc) {
+        item.added = false;
+      }
+      return item;
+    });
+
+    this.setState({
+      searchResults: newResults,
+    })
   }
 
   async handleSearch() {
@@ -226,11 +301,9 @@ export default class SearchScreen extends React.Component {
     try {
       let resultados = await busqueda(term);
 
-      // Check items already added to our list.
-      // const bcs = (await localForage.getItem('barcodes')) || [];
-      // resultados.forEach((item) => {
-      //   item.added = bcs.find((bc) => item.barcode === bc) && true;
-      // });
+      resultados.forEach((item) => {
+        item.added = this._barcodeStore.barcodes.find((bc) => item.barcode === bc) && true;
+      });
 
       this.setState({
         searchTerm: term,
