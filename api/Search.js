@@ -162,35 +162,38 @@ const buscaColesAsync = async (term, isBarcode = false) => {
   const queryUrl = 'https://shop.coles.com.au/search/resources/store/20501/productview/bySearchTerm/' + term;
 
   try {
+    let productsRaw;
     const resultados = await fetch(queryUrl, {
       method: 'GET',
       credentials: 'include',
     });
 
+    // let's wait for the body
     const body = await resultados.text();
-    console.log(resultados.headers);
 
+    // If it is an html it means we need to send a POST to awasah
+    // to get a new cookie.
     const isHtml = /<html>/gmi.test(body);
     if (isHtml) {
-      const awash = await fetch('https://shop.coles.com.au/fp/awasah/', {
+      const awasah = await fetch('https://shop.coles.com.au/fp/awasah/', {
         headers: {
           'Content-type': 'application/xml',
         },
         method: 'POST',
+        credentials: 'include',
         body: payload,
       });
-
+      // We should have the new cookie now.
+      // Send the request again.
       const resultados2 = await fetch(queryUrl, {
         method: 'GET',
         credentials: 'include',
       });
-
-      const body2 = await resultados2.text();
-      console.log(body2);
+      productsRaw = await resultados2.json();
+    } else {
+      productsRaw = JSON.parse(body);
     }
 
-
-    const productsRaw = await resultados.json();
     const products = productsRaw.catalogEntryView.map((product) => {
       const data = {
         barcode: isBarcode ? term : undefined,

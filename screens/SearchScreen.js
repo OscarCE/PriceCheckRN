@@ -17,6 +17,9 @@ export default class SearchScreen extends React.Component {
     }
   }
   render() {
+    const searchParam = this.props.navigation.getParam('bc', '');
+    console.log('searchParam');
+    console.log(searchParam);
     const estilos = StyleSheet.create({
       searchView: {
         zIndex: 1,
