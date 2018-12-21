@@ -4,6 +4,8 @@ import { AsyncStorage } from 'react-native';
 export default class BarcodeStore {
   @observable barcodes = [];
   loaded = false;
+  addBarcodeHelper;
+  deleteBarcodeHelper;
 
   async loadBarcodes() {
     if (this.loaded === true) { return; }
@@ -24,7 +26,6 @@ export default class BarcodeStore {
       console.log(e);
     }
   }
-
   @action async addBarcode(barcode) {
     await this.loadBarcodes();
 
@@ -33,7 +34,6 @@ export default class BarcodeStore {
       this.saveBarcodes();
     }
   }
-
   @action async deleteBarcode(barcode) {
     await this.loadBarcodes();
 
@@ -43,10 +43,16 @@ export default class BarcodeStore {
       this.saveBarcodes();
     }
   }
-
   async hasBarcodes() {
     await this.loadBarcodes();
 
     return this.barcodes.length > 0;
+  }
+
+  setAddBarcodeHelper(helper) {
+    this.addBarcodeHelper = helper;
+  }
+  setDeleteBarcodeHelper(helper) {
+    this.deleteBarcodeHelper = helper;
   }
 }
