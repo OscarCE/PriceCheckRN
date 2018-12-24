@@ -84,8 +84,6 @@ export default class SearchScreen extends React.Component {
   }
 
   async addBarcode(bc) {
-    console.log('Search add barcode');
-
     this._barcodeStore.addBarcode(bc);
 
     const newResults = this.resultados.map((item) => {
@@ -99,8 +97,6 @@ export default class SearchScreen extends React.Component {
   }
 
   async deleteBarcode(bc) {
-    console.log('Search delete barcode');
-
     this._barcodeStore.deleteBarcode(bc);
 
     const newResults = this.resultados.map((item) => {
