@@ -18,20 +18,19 @@ export default class SearchScreen extends React.Component {
     super(props);
 
     // bind functions
+    this._barcodeStore = this.props.barcodeStore;
     this.handleSearch = this.handleSearch.bind(this);
     this.addBarcode = this.addBarcode.bind(this);
     this.deleteBarcode = this.deleteBarcode.bind(this);
-
-    // initialize barcode store
-    this._barcodeStore = this.props.barcodeStore;
-    this._barcodeStore.loadBarcodes();
-    this._barcodeStore.setAddBarcodeHelper(this.addBarcode);
-    this._barcodeStore.setDeleteBarcodeHelper(this.deleteBarcode);
   }
-  componentDidMount() {
+  async componentDidMount() {
     this._onFocus = this.props.navigation.addListener(
       'didFocus',
-      payload => {
+      async (payload) => {
+        await this._barcodeStore.loadBarcodes();
+        // set add and delete functions for this screen
+        this._barcodeStore.setAddBarcodeHelper(this.addBarcode);
+        this._barcodeStore.setDeleteBarcodeHelper(this.deleteBarcode);
         // Search = desde scan
         // SearchTab = cambiando tabs
         const routeName = payload.action.routeName;
@@ -85,6 +84,8 @@ export default class SearchScreen extends React.Component {
   }
 
   async addBarcode(bc) {
+    console.log('Search add barcode');
+
     this._barcodeStore.addBarcode(bc);
 
     const newResults = this.resultados.map((item) => {
@@ -98,6 +99,8 @@ export default class SearchScreen extends React.Component {
   }
 
   async deleteBarcode(bc) {
+    console.log('Search delete barcode');
+
     this._barcodeStore.deleteBarcode(bc);
 
     const newResults = this.resultados.map((item) => {

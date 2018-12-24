@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import Card from './../Card.js';
+import Card from '../Cards/Card.js';
 
 export default class Results extends React.Component {
   constructor(props) {

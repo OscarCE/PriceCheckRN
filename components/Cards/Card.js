@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { Card as PCard, Text, Button } from 'react-native-paper';
-import Colors from './../constants/Colors';
+import Colors from '../../constants/Colors';
 import { inject, observer } from 'mobx-react';
 
 const Card = inject('barcodeStore')(observer(({ content, parent, barcodeStore }) => {
@@ -88,7 +88,6 @@ const Card = inject('barcodeStore')(observer(({ content, parent, barcodeStore })
       backgroundColor: Colors.errorBackground,
     },
   });
-
   return (
     <View
       style={estilos.cardContainer}
